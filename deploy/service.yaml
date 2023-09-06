@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx-testing
-  namespaces: testing
+  # namespaces: testing
 spec:
   type: NodePort
   selector:
