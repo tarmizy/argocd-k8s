@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+   argocd-image-updater.argoproj.io/image-list: app1_img=docker.io/tarmizy/test:latest   #Write repository name
+   argocd-image-updater.argoproj.io/app1_img.update-strategy: digest #There are several ways to update the image, but I'm using digest
+   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+   argocd-image-updater.argoproj.io/git-branch: main 
+   argocd-image-updater.argoproj.io/app1_img.force-update: "true"
+   argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-credential
+  # finalizers:
+  #   - resources-finalizer.argocd.argoproj.io
+  labels:
+    app.kubernetes.io/instance: demo-app
+  name: demo-app
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: testing
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: demo
+    repoURL: 'https://github.com/tarmizy/demo-manifest.git'
+    targetRevision: main
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
